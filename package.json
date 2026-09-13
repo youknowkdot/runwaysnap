@@ -1,0 +1,14 @@
+{
+  "name": "runwaysnap",
+  "version": "1.0.0",
+  "description": "Cash runway / burn calculator for solo founders — static MVP",
+  "private": true,
+  "scripts": {
+    "dev": "python3 -m http.server 5173",
+    "start": "python3 -m http.server 5173",
+    "build": "node scripts/build.js",
+    "preview": "python3 -m http.server 4173 --directory dist"
+  },
+  "keywords": ["runway", "burn-rate", "startup", "static"],
+  "license": "MIT"
+}
