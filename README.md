@@ -19,7 +19,6 @@ Landing page (`index.html`) + calculator (`app.html`) — sales-ready copy, no f
 No bundler required. From the project root:
 
 ```bash
-cd /workspace/runwaysnap
 python3 -m http.server 5173
 # open http://localhost:5173          → landing
 # open http://localhost:5173/app.html → calculator
@@ -37,6 +36,8 @@ Any static file server works (`npx serve`, Caddy, nginx, etc.).
 
 ## Build & deploy
 
+`dist/` is **not** committed — build on deploy (or run `npm run build` locally before uploading).
+
 ```bash
 npm run build
 ```
@@ -45,23 +46,37 @@ Publish the **`dist/`** folder to:
 
 - **Netlify** — `netlify.toml` already points publish at `dist` (`npm run build`)
 - **Cloudflare Pages** — build command `npm run build`, output directory `dist`
-- **GitHub Pages** — upload / Actions deploy of `dist/` (or root if you prefer serving without build)
+- **GitHub Pages** — use Actions (or a manual upload) of `dist/` after `npm run build`
 
 This is a static site (HTML/CSS/JS). No Node runtime in production.
 
-## Seller note — wire your checkout URL
+## Ship checklist
 
-Pro checkout is a placeholder until you plug in a real link.
+Before you sell:
 
-1. Create a **$19 one-time** product on [Gumroad](https://gumroad.com) or [Lemon Squeezy](https://lemonsqueezy.com).
-2. Open `js/config.js` and set:
+1. **Plug checkout URL** — create a **$19 one-time** product on [Gumroad](https://gumroad.com) or [Lemon Squeezy](https://lemonsqueezy.com). Open `js/config.js` and set:
 
-```js
-YOUR_CHECKOUT_URL: "https://yourstore.gumroad.com/l/runwaysnap-pro",
-```
+   ```js
+   YOUR_CHECKOUT_URL: "https://yourstore.gumroad.com/l/runwaysnap-pro",
+   ```
 
-3. Rebuild / redeploy if you use `dist/`.
-4. Optional: after purchase, send buyers to `https://yoursite.com/app.html?pro=1` or tell them the demo code is for demos only — for production, replace demo unlock with license validation or Gumroad’s “send download / redirect” flow.
+   The default value is a clearly marked **placeholder**. Buy Pro will warn until you replace it.
+
+2. **Deploy static host** — connect this repo to Netlify or Cloudflare Pages (build: `npm run build`, publish: `dist`). Confirm landing + calculator load over HTTPS.
+
+3. **Post-purchase redirect tip** — point the provider’s “thank you” / redirect URL to:
+
+   `https://yoursite.com/app.html?pro=1`
+
+   That unlocks Pro in the buyer’s browser via `localStorage`. For production hardening later, replace demo unlock with real license validation (intentionally deferred in this MVP).
+
+4. **Smoke-test** — free calc (incl. zero burn), Pro demo code `RUNWAY-PRO`, CSV samples under `samples/`, and Print / PDF brief.
+
+5. **Optional** — remove or hide the “Lock Pro (testing)” control and demo-code UI once you have real checkout + license flow.
+
+## Seller note — checkout & demo unlock
+
+Pro checkout is a placeholder until you plug in a real link (see Ship checklist).
 
 ### Demo unlock (MVP / testing)
 
@@ -71,12 +86,14 @@ YOUR_CHECKOUT_URL: "https://yourstore.gumroad.com/l/runwaysnap-pro",
 
 ## Sample CSV
 
-See `samples/monthly-cash.csv` and `samples/transactions.csv`.
+See `samples/monthly-cash.csv`, `samples/transactions.csv`, and `samples/quoted-cash.csv`.
 
 Supported headers:
 
 - `month,cash` (or `date` / `balance`) — estimates burn from cash deltas  
 - `date,amount` — averages amount as monthly burn  
+
+Quoted fields (e.g. `"Apr 2026","85,000"`) are supported.
 
 ## Project layout
 
@@ -86,13 +103,13 @@ runwaysnap/
   app.html            Calculator
   css/styles.css
   js/config.js        ← YOUR_CHECKOUT_URL lives here
-  js/calc.js          Runway math
+  js/calc.js          Runway math + CSV parse
   js/chart.js         SVG chart
   js/storage.js       localStorage helpers
   js/app.js           UI
   samples/            Example CSVs
   scripts/build.js    Copies to dist/
-  dist/               Build output
+  dist/               Build output (gitignored)
   netlify.toml
   README.md
 ```

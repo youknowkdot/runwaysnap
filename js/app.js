@@ -23,7 +23,7 @@
     el.textContent = msg;
     el.classList.add("show");
     clearTimeout(el._t);
-    el._t = setTimeout(() => el.classList.remove("show"), 2800);
+    el._t = setTimeout(() => el.classList.remove("show"), 3200);
   }
 
   function applyProUI() {
@@ -33,13 +33,18 @@
     if (status) {
       status.textContent = on ? "Pro unlocked" : "Free";
     }
+    // Hide unlock CTAs in nav when already Pro
+    $$("[data-unlock]").forEach((el) => {
+      if (el.closest(".nav")) {
+        el.hidden = on;
+      }
+    });
   }
 
   function checkQueryPro() {
     const params = new URLSearchParams(location.search);
     if (params.get("pro") === "1") {
       window.RSStorage.setPro(true);
-      // clean URL without reload noise
       params.delete("pro");
       const q = params.toString();
       history.replaceState(
@@ -93,15 +98,17 @@
   }
 
   function hasUsefulInput() {
-    const cash = parseFloat(state.startingCash);
+    const cashRaw = state.startingCash;
+    if (cashRaw === "" || cashRaw == null) return false;
+    const cash = parseFloat(cashRaw);
     if (!isFinite(cash)) return false;
     if (state.mode === "burn") {
       return state.monthlyBurn !== "" && isFinite(parseFloat(state.monthlyBurn));
     }
     return (
       (state.monthlyIncome !== "" || state.monthlyExpenses !== "") &&
-      (isFinite(parseFloat(state.monthlyIncome)) ||
-        isFinite(parseFloat(state.monthlyExpenses)))
+      (isFinite(parseFloat(state.monthlyIncome || "0")) ||
+        isFinite(parseFloat(state.monthlyExpenses || "0")))
     );
   }
 
@@ -142,18 +149,29 @@
     runwayEl.textContent = window.RSCalc.formatMonths(months);
     runwayEl.className = "value " + sev;
 
-    $("#outZero").textContent = window.RSCalc.formatDate(zero);
-    $("#outZero").className = "value " + sev;
+    const zeroEl = $("#outZero");
+    zeroEl.textContent = window.RSCalc.formatDate(zero);
+    zeroEl.className = "value " + sev;
 
-    const burnLabel =
-      norm.netBurn > 0
-        ? window.RSCalc.formatMoney(norm.netBurn) + " / mo burn"
-        : norm.netBurn < 0
-          ? window.RSCalc.formatMoney(-norm.netBurn) + " / mo surplus"
-          : "Break-even";
+    let burnLabel;
+    if (norm.netBurn > 0) {
+      burnLabel = window.RSCalc.formatMoney(norm.netBurn) + " / mo burn";
+    } else if (norm.netBurn < 0) {
+      burnLabel = window.RSCalc.formatMoney(-norm.netBurn) + " / mo surplus";
+    } else {
+      burnLabel = "Break-even";
+    }
     $("#outBurn").textContent = burnLabel;
 
     $("#outCash").textContent = window.RSCalc.formatMoney(norm.startingCash);
+
+    // Clarify zero-cash subcopy when infinite
+    const zeroSub = $("#outZeroSub");
+    if (zeroSub) {
+      zeroSub.textContent = isFinite(months)
+        ? "Projected from today"
+        : "Cash not projected to hit zero";
+    }
 
     const series = window.RSCalc.projectionSeries(
       norm.startingCash,
@@ -167,15 +185,6 @@
       zero,
       series,
     });
-
-    // hero preview if present
-    const heroRunway = $("#heroRunway");
-    if (heroRunway) {
-      heroRunway.textContent = window.RSCalc.formatMonths(months);
-      heroRunway.className = "value " + sev;
-    }
-    const heroZero = $("#heroZero");
-    if (heroZero) heroZero.textContent = window.RSCalc.formatDate(zero);
   }
 
   function updatePrintBrief(data) {
@@ -187,31 +196,53 @@
     }
     const { norm, months, zero, series } = data;
     const name =
-      ($("#scenarioName") && $("#scenarioName").value) || "Current scenario";
+      ($("#scenarioName") && $("#scenarioName").value.trim()) ||
+      "Current scenario";
+
+    const netLabel =
+      norm.netBurn > 0
+        ? "Net monthly burn"
+        : norm.netBurn < 0
+          ? "Net monthly surplus"
+          : "Net monthly (break-even)";
+    const netValue =
+      norm.netBurn === 0
+        ? "Break-even"
+        : window.RSCalc.formatMoney(Math.abs(norm.netBurn));
+
     const rows = series.labels
       .map(
         (l, i) =>
-          `<tr><td>${l}</td><td>${window.RSCalc.formatMoney(series.values[i])}</td></tr>`
+          `<tr><td>${escapeHtml(l)}</td><td>${window.RSCalc.formatMoney(series.values[i])}</td></tr>`
       )
       .slice(0, 13)
       .join("");
 
+    const note =
+      norm.netBurn <= 0
+        ? "At current burn you are not projected to run out of cash (break-even or surplus)."
+        : "Rough estimate assuming constant monthly burn. Verify with your books.";
+
     root.innerHTML = `
       <div class="print-brief">
-        <h1>RunwaySnap Brief</h1>
-        <p class="meta">${escapeHtml(name)} · Generated ${new Date().toLocaleString()} · Not financial advice</p>
+        <header class="print-header">
+          <div class="print-brand">RunwaySnap</div>
+          <div class="print-title">One-page runway brief</div>
+        </header>
+        <p class="meta">${escapeHtml(name)} · Generated ${new Date().toLocaleString()} · Planning estimate only — not financial advice</p>
         <div class="grid">
           <div class="box"><div class="l">Starting cash</div><div class="v">${window.RSCalc.formatMoney(norm.startingCash)}</div></div>
-          <div class="box"><div class="l">Net monthly burn</div><div class="v">${window.RSCalc.formatMoney(norm.netBurn)}</div></div>
+          <div class="box"><div class="l">${netLabel}</div><div class="v">${netValue}</div></div>
           <div class="box"><div class="l">Runway</div><div class="v">${window.RSCalc.formatMonths(months)}</div></div>
+          <div class="box"><div class="l">Zero-cash date</div><div class="v">${window.RSCalc.formatDate(zero)}</div></div>
         </div>
-        <p><strong>Projected zero-cash date:</strong> ${window.RSCalc.formatDate(zero)}</p>
-        <h2 style="font-size:12pt;margin:16pt 0 8pt">Cash projection</h2>
+        <p class="print-note">${escapeHtml(note)}</p>
+        <h2>Cash projection (next months)</h2>
         <table>
           <thead><tr><th>Month</th><th>Projected cash</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
-        <footer>RunwaySnap · Client-side estimate for planning only. Verify with your books.</footer>
+        <footer>RunwaySnap · Client-side estimate. Data was not uploaded. © ${new Date().getFullYear()}</footer>
       </div>
     `;
   }
@@ -225,12 +256,33 @@
   }
 
   /* —— Pro unlock —— */
+  let lastFocus = null;
+
   function openUnlockModal() {
-    $("#unlockModal").classList.add("open");
-    $("#demoCode").focus();
+    lastFocus = document.activeElement;
+    const modal = $("#unlockModal");
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    // Reflect placeholder status on checkout button
+    const checkoutBtn = $("#btnCheckout");
+    if (checkoutBtn && cfg.isCheckoutPlaceholder && cfg.isCheckoutPlaceholder()) {
+      checkoutBtn.textContent = "Buy Pro — $19 (checkout URL not set)";
+      checkoutBtn.title =
+        "Replace YOUR_CHECKOUT_URL in js/config.js with your Gumroad or Lemon Squeezy link";
+    } else if (checkoutBtn) {
+      checkoutBtn.textContent = "Buy Pro — $19";
+      checkoutBtn.removeAttribute("title");
+    }
+    $("#demoCode")?.focus();
   }
+
   function closeUnlockModal() {
-    $("#unlockModal").classList.remove("open");
+    const modal = $("#unlockModal");
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    if (lastFocus && typeof lastFocus.focus === "function") {
+      lastFocus.focus();
+    }
   }
 
   function tryDemoCode() {
@@ -241,12 +293,20 @@
       closeUnlockModal();
       toast("Pro unlocked — welcome aboard");
       renderScenarios();
+    } else if (!code) {
+      toast("Enter the demo code RUNWAY-PRO, or use ?pro=1");
     } else {
       toast("That code didn’t work. Try RUNWAY-PRO for the demo.");
     }
   }
 
   function goCheckout() {
+    if (cfg.isCheckoutPlaceholder && cfg.isCheckoutPlaceholder()) {
+      toast(
+        "Checkout URL is still a placeholder. Set YOUR_CHECKOUT_URL in js/config.js"
+      );
+      return;
+    }
     const url = cfg.YOUR_CHECKOUT_URL;
     window.open(url, "_blank", "noopener,noreferrer");
   }
@@ -258,17 +318,17 @@
     const scenarios = window.RSStorage.getScenarios();
     if (!scenarios.length) {
       list.innerHTML =
-        '<li style="color:var(--ink-faint);justify-content:center">No saved scenarios yet</li>';
+        '<li class="scenario-empty">No saved scenarios yet — name one above and save</li>';
       return;
     }
     list.innerHTML = scenarios
       .map(
         (s, i) => `
       <li>
-        <span>${escapeHtml(s.name)}</span>
+        <span class="scenario-name">${escapeHtml(s.name)}</span>
         <span class="actions">
           <button type="button" class="btn btn-ghost btn-sm" data-load="${i}">Load</button>
-          <button type="button" class="btn btn-ghost btn-sm" data-del="${i}" aria-label="Delete">✕</button>
+          <button type="button" class="btn btn-ghost btn-sm" data-del="${i}" aria-label="Delete ${escapeHtml(s.name)}">Delete</button>
         </span>
       </li>`
       )
@@ -281,6 +341,10 @@
       return;
     }
     readInputs();
+    if (!hasUsefulInput()) {
+      toast("Enter cash and burn before saving a scenario");
+      return;
+    }
     const name = ($("#scenarioName").value || "").trim() || "Untitled";
     const scenarios = window.RSStorage.getScenarios();
     scenarios.push({
@@ -317,15 +381,22 @@
 
   function deleteScenario(i) {
     const scenarios = window.RSStorage.getScenarios();
+    const name = scenarios[i]?.name || "scenario";
     scenarios.splice(i, 1);
     window.RSStorage.saveScenarios(scenarios);
     renderScenarios();
+    toast("Deleted “" + name + "”");
   }
 
   /* —— CSV import (Pro) —— */
   function handleCsvFile(file) {
     if (!window.RSStorage.isPro()) {
       openUnlockModal();
+      return;
+    }
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast("CSV is too large (max 2 MB)");
       return;
     }
     const reader = new FileReader();
@@ -340,6 +411,10 @@
           $("#monthlyBurn").value = String(
             Math.round(Math.abs(result.monthlyBurn))
           );
+        } else if (result.startingCash != null) {
+          toast("Imported cash balance — enter monthly burn to finish");
+          recalculate();
+          return;
         }
         recalculate();
         toast("CSV imported — review the numbers");
@@ -347,6 +422,7 @@
         toast(e.message || "Could not parse CSV");
       }
     };
+    reader.onerror = () => toast("Could not read that file");
     reader.readAsText(file);
   }
 
@@ -359,6 +435,8 @@
       toast("Enter cash and burn first");
       return;
     }
+    // Ensure brief is fresh
+    recalculate();
     window.print();
   }
 
@@ -369,7 +447,7 @@
     $("#monthlyIncome").value = "";
     $("#monthlyExpenses").value = "";
     recalculate();
-    toast("Loaded example numbers");
+    toast("Loaded example: $85k cash · $12k/mo burn");
   }
 
   function clearAll() {
@@ -378,6 +456,7 @@
     $("#monthlyIncome").value = "";
     $("#monthlyExpenses").value = "";
     if ($("#scenarioName")) $("#scenarioName").value = "";
+    if ($("#csvInput")) $("#csvInput").value = "";
     recalculate();
     toast("Cleared");
   }
@@ -403,6 +482,10 @@
     $$("[data-unlock]").forEach((el) =>
       el.addEventListener("click", (e) => {
         e.preventDefault();
+        if (window.RSStorage.isPro()) {
+          toast("Pro is already unlocked");
+          return;
+        }
         openUnlockModal();
       })
     );
@@ -415,6 +498,11 @@
     $("#btnCloseModal")?.addEventListener("click", closeUnlockModal);
     $("#unlockModal")?.addEventListener("click", (e) => {
       if (e.target.id === "unlockModal") closeUnlockModal();
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && $("#unlockModal")?.classList.contains("open")) {
+        closeUnlockModal();
+      }
     });
 
     $("#btnSaveScenario")?.addEventListener("click", saveScenario);

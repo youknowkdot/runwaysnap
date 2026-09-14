@@ -13,12 +13,13 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f6b4a'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='16' font-family='system-ui' font-weight='700'%3ER%3C/text%3E%3C/svg%3E" />
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to calculator</a>
   <header class="site-header no-print">
     <div class="container inner">
       <a class="logo" href="index.html">
         <span class="logo-mark" aria-hidden="true">R</span>
         RunwaySnap
-        <span class="badge-pro">Pro</span>
+        <span class="badge-pro" aria-hidden="true">Pro</span>
       </a>
       <nav class="nav" aria-label="Primary">
         <span id="proStatus" class="sr-only">Free</span>
@@ -28,11 +29,11 @@
     </div>
   </header>
 
-  <main class="app-shell no-print">
+  <main id="main" class="app-shell no-print">
     <div class="container">
-      <div style="margin-bottom:1.25rem">
-        <h1 style="font-size:1.65rem;margin-bottom:0.25rem">Runway calculator</h1>
-        <p style="margin:0;max-width:48ch">
+      <div class="app-intro">
+        <h1>Runway calculator</h1>
+        <p>
           Enter your cash position. We’ll estimate months of runway and when you might hit zero —
           privately, in this browser.
         </p>
@@ -43,16 +44,16 @@
         <section class="panel" aria-labelledby="inputsHeading">
           <div class="panel-header">
             <h2 id="inputsHeading">Your numbers</h2>
-            <div style="display:flex;gap:0.25rem">
-              <button type="button" class="btn btn-ghost btn-sm" id="btnExample">Example</button>
+            <div class="panel-header-actions">
+              <button type="button" class="btn btn-ghost btn-sm" id="btnExample">Load example</button>
               <button type="button" class="btn btn-ghost btn-sm" id="btnClear">Clear</button>
             </div>
           </div>
 
           <div class="field">
             <label for="startingCash">Starting cash</label>
-            <input id="startingCash" type="number" inputmode="decimal" min="0" step="100" placeholder="e.g. 85000" />
-            <p class="hint">Cash in bank you can use for operations</p>
+            <input id="startingCash" type="number" inputmode="decimal" min="0" step="100" placeholder="e.g. 85000" aria-describedby="cashHint" />
+            <p class="hint" id="cashHint">Cash in bank you can use for operations</p>
           </div>
 
           <div class="segmented" role="group" aria-label="Burn input mode">
@@ -63,8 +64,8 @@
           <div id="burnFields">
             <div class="field">
               <label for="monthlyBurn">Monthly burn</label>
-              <input id="monthlyBurn" type="number" inputmode="decimal" min="0" step="100" placeholder="e.g. 12000" />
-              <p class="hint">Average net cash you spend each month</p>
+              <input id="monthlyBurn" type="number" inputmode="decimal" min="0" step="100" placeholder="e.g. 12000" aria-describedby="burnHint" />
+              <p class="hint" id="burnHint">Average net cash you spend each month. Zero = break-even (unlimited runway).</p>
             </div>
           </div>
 
@@ -75,8 +76,8 @@
             </div>
             <div class="field">
               <label for="monthlyExpenses">Monthly expenses</label>
-              <input id="monthlyExpenses" type="number" inputmode="decimal" min="0" step="100" placeholder="e.g. 15000" />
-              <p class="hint">We use expenses − income as your net burn</p>
+              <input id="monthlyExpenses" type="number" inputmode="decimal" min="0" step="100" placeholder="e.g. 15000" aria-describedby="incomeHint" />
+              <p class="hint" id="incomeHint">We use expenses − income as your net burn. If income ≥ expenses, runway is unlimited.</p>
             </div>
           </div>
 
@@ -91,24 +92,24 @@
 
           <!-- Unlocked Pro panel -->
           <div class="pro-panel">
-            <h3 style="font-size:0.95rem;margin-bottom:0.75rem;color:var(--pro)">Pro features</h3>
+            <h3 class="pro-panel-title">Pro features</h3>
 
             <div class="field">
               <label for="csvInput">Import CSV</label>
-              <input id="csvInput" type="file" accept=".csv,text/csv" />
-              <p class="hint">Headers: <code>month,cash</code> or <code>date,amount</code></p>
+              <input id="csvInput" type="file" accept=".csv,text/csv" aria-describedby="csvHint" />
+              <p class="hint" id="csvHint">Headers: <code>month,cash</code> (or <code>balance</code>) or <code>date,amount</code>. Quoted fields OK.</p>
             </div>
 
             <div class="field">
               <label for="scenarioName">Scenario name</label>
-              <input id="scenarioName" type="text" maxlength="60" placeholder="e.g. Base case Q3" />
+              <input id="scenarioName" type="text" maxlength="60" placeholder="e.g. Base case Q3" autocomplete="off" />
             </div>
-            <div class="pro-actions" style="margin-bottom:0.5rem">
+            <div class="pro-actions pro-actions-gap">
               <button type="button" class="btn btn-secondary btn-sm" id="btnSaveScenario">Save scenario</button>
               <button type="button" class="btn btn-secondary btn-sm" id="btnPrint">Print / PDF brief</button>
             </div>
             <ul class="scenario-list" id="scenarioList" aria-label="Saved scenarios"></ul>
-            <p class="hint" style="margin-top:0.75rem">
+            <p class="hint lock-pro-wrap">
               <button type="button" class="btn btn-ghost btn-sm" id="btnLockPro">Lock Pro (testing)</button>
             </p>
           </div>
@@ -122,7 +123,7 @@
 
           <div id="emptyResults" class="empty-state">
             <strong>Waiting for numbers</strong>
-            Enter starting cash and burn (or try Example) to see runway, a zero-cash date, and a chart.
+            Enter starting cash and monthly burn — or tap <em>Load example</em> — to see runway, a zero-cash date, and a chart.
           </div>
 
           <div id="filledResults" hidden>
@@ -134,27 +135,27 @@
               </div>
               <div class="result-card">
                 <div class="label">Zero-cash date</div>
-                <div class="value" id="outZero" style="font-size:1.15rem">—</div>
-                <div class="sub">Projected from today</div>
+                <div class="value value-md" id="outZero">—</div>
+                <div class="sub" id="outZeroSub">Projected from today</div>
               </div>
               <div class="result-card">
                 <div class="label">Net monthly</div>
-                <div class="value" id="outBurn" style="font-size:1.15rem">—</div>
+                <div class="value value-md" id="outBurn">—</div>
                 <div class="sub">Burn or surplus</div>
               </div>
               <div class="result-card">
                 <div class="label">Starting cash</div>
-                <div class="value" id="outCash" style="font-size:1.15rem">—</div>
+                <div class="value value-md" id="outCash">—</div>
                 <div class="sub">As entered</div>
               </div>
             </div>
 
             <div class="chart-wrap">
               <h3>Projected cash balance</h3>
-              <svg id="runwayChart" viewBox="0 0 640 220" width="100%" height="220"></svg>
+              <svg id="runwayChart" viewBox="0 0 640 220" width="100%" height="220" aria-label="Projected cash chart"></svg>
             </div>
 
-            <p class="hint" style="margin:0">
+            <p class="hint disclaimer">
               Rough estimate assuming constant monthly burn. Not financial advice — verify with your books.
             </p>
           </div>
@@ -174,7 +175,7 @@
   </footer>
 
   <!-- Unlock modal -->
-  <div class="unlock-modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="unlockTitle">
+  <div class="unlock-modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="unlockTitle" aria-hidden="true">
     <div class="modal">
       <h2 id="unlockTitle">Unlock RunwaySnap Pro</h2>
       <p>
@@ -186,13 +187,13 @@
         <button type="button" class="btn btn-secondary" id="btnCloseModal">Not now</button>
       </div>
       <div class="divider">or demo unlock</div>
-      <div class="field" style="margin-bottom:0.5rem">
+      <div class="field field-tight">
         <label for="demoCode">Demo code</label>
         <input id="demoCode" type="text" autocomplete="off" placeholder="RUNWAY-PRO" spellcheck="false" />
         <p class="hint">For demos and testing. Also works: add <code>?pro=1</code> to the URL.</p>
       </div>
       <button type="button" class="btn btn-secondary" id="btnDemoUnlock">Apply code</button>
-      <p class="hint" style="margin-top:1rem;margin-bottom:0">
+      <p class="hint checkout-hint">
         Checkout URL is set in <code>js/config.js</code> (<code>YOUR_CHECKOUT_URL</code>).
         Replace the placeholder with your Gumroad or Lemon Squeezy link before selling.
       </p>
