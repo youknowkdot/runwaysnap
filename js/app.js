@@ -28,7 +28,9 @@
 
   function applyProUI() {
     const on = window.RSStorage.isPro();
+    const debug = new URLSearchParams(location.search).has("debug");
     document.body.classList.toggle("is-pro", on);
+    document.body.classList.toggle("debug-mode", debug);
     const status = $("#proStatus");
     if (status) {
       status.textContent = on ? "Pro unlocked" : "Free";
@@ -39,6 +41,11 @@
         el.hidden = on;
       }
     });
+    // Lock Pro (testing): only when already Pro AND ?debug=1
+    const lockWrap = $(".lock-pro-wrap");
+    if (lockWrap) {
+      lockWrap.hidden = !(on && debug);
+    }
   }
 
   function checkQueryPro() {

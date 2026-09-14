@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Calculator — RunwaySnap</title>
   <meta name="description" content="Calculate your cash runway. Free in-browser tool. Pro: CSV import, PDF brief, scenarios." />
-  <meta name="theme-color" content="#1f6b4a" />
+  <meta name="theme-color" content="#0a0b0f" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;550;650;750&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f6b4a'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='16' font-family='system-ui' font-weight='700'%3ER%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2300FBFF'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='%230a0b0f' font-size='16' font-family='system-ui' font-weight='700'%3ER%3C/text%3E%3C/svg%3E" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to calculator</a>
@@ -109,8 +109,8 @@
               <button type="button" class="btn btn-secondary btn-sm" id="btnPrint">Print / PDF brief</button>
             </div>
             <ul class="scenario-list" id="scenarioList" aria-label="Saved scenarios"></ul>
-            <p class="hint lock-pro-wrap">
-              <button type="button" class="btn btn-ghost btn-sm" id="btnLockPro">Lock Pro (testing)</button>
+            <p class="hint lock-pro-wrap" hidden>
+              <button type="button" class="btn btn-ghost btn-sm" id="btnLockPro" title="Debug: revert to Free">Lock Pro (testing)</button>
             </p>
           </div>
         </section>
@@ -194,8 +194,8 @@
       </div>
       <button type="button" class="btn btn-secondary" id="btnDemoUnlock">Apply code</button>
       <p class="hint checkout-hint">
-        Checkout URL is set in <code>js/config.js</code> (<code>YOUR_CHECKOUT_URL</code>).
-        Replace the placeholder with your Gumroad or Lemon Squeezy link before selling.
+        Secure checkout via Gumroad. After purchase, use the demo unlock path on this device for demos,
+        or return here with your license flow when available.
       </p>
     </div>
   </div>

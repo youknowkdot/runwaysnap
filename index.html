@@ -5,12 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>RunwaySnap — Cash runway calculator for founders</title>
   <meta name="description" content="Know how many months of runway you have. Free browser calculator for solo founders and small ops teams. Pro unlocks CSV import and PDF brief — $19 one-time." />
-  <meta name="theme-color" content="#1f6b4a" />
+  <meta name="theme-color" content="#0a0b0f" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;550;650;750&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="css/styles.css" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231f6b4a'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='16' font-family='system-ui' font-weight='700'%3ER%3C/text%3E%3C/svg%3E" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2300FBFF'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='%230a0b0f' font-size='16' font-family='system-ui' font-weight='700'%3ER%3C/text%3E%3C/svg%3E" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -62,12 +62,13 @@
           <svg class="hero-chart" viewBox="0 0 640 220" role="img" aria-label="Sample declining cash chart">
             <defs>
               <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#e8f5ef"/>
-                <stop offset="100%" stop-color="#e8f5ef" stop-opacity="0.3"/>
+                <stop offset="0%" stop-color="#00FBFF" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#00FBFF" stop-opacity="0.02"/>
               </linearGradient>
             </defs>
             <polygon points="40,40 100,55 160,70 220,85 280,100 340,115 400,130 460,145 520,160 580,200 580,200 40,200" fill="url(#g)"/>
-            <polyline points="40,40 100,55 160,70 220,85 280,100 340,115 400,130 460,145 520,160 580,200" fill="none" stroke="#1f6b4a" stroke-width="2.5" stroke-linejoin="round"/>
+            <polyline points="40,40 100,55 160,70 220,85 280,100 340,115 400,130 460,145 520,160 580,200" fill="none" stroke="#00FBFF" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle cx="580" cy="200" r="5" fill="#00FBFF"/>
           </svg>
           <p class="hero-card-note">Illustrative only — open the calculator for your numbers.</p>
         </aside>
@@ -131,9 +132,9 @@
           </article>
         </div>
         <p class="fine-print">
-          Payments are handled by your checkout provider (e.g. Gumroad or Lemon Squeezy) once configured.
-          RunwaySnap stores inputs only in your browser’s localStorage — nothing is uploaded to our servers.
-          Estimates are for planning only and are not financial, tax, or investment advice.
+          Pro checkout is handled securely via Gumroad. RunwaySnap stores inputs only in your browser’s
+          localStorage — nothing is uploaded to our servers. Estimates are for planning only and are not
+          financial, tax, or investment advice.
         </p>
       </div>
     </section>

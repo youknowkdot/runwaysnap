@@ -1,16 +1,10 @@
 /**
  * RunwaySnap configuration
  *
- * SELLER SETUP (required before selling Pro):
- *   1. Create a $19 one-time product on Gumroad or Lemon Squeezy
- *   2. Replace YOUR_CHECKOUT_URL below with the real product / checkout link
- *   3. Rebuild (`npm run build`) and redeploy
- *
- * Until then, Buy Pro opens this placeholder and the UI warns that checkout
- * is not configured. Demo unlock (RUNWAY-PRO / ?pro=1) still works for testing.
+ * Checkout: Gumroad product link for Pro ($19 one-time).
+ * Demo unlock (RUNWAY-PRO / ?pro=1) remains available for demos and testing.
  */
 window.RUNWAYSNAP_CONFIG = {
-  // ⚠️ PLACEHOLDER — replace with your Gumroad or Lemon Squeezy URL before selling
   YOUR_CHECKOUT_URL: "https://kdotknows.gumroad.com/l/evzmb",
 
   PRICE: "$19",
@@ -22,7 +16,7 @@ window.RUNWAYSNAP_CONFIG = {
     scenarios: "runwaysnap_scenarios",
   },
 
-  /** True when YOUR_CHECKOUT_URL still looks like the example placeholder */
+  /** True when checkout URL is missing or still an unresolved placeholder */
   isCheckoutPlaceholder() {
     const u = String(this.YOUR_CHECKOUT_URL || "");
     return (
