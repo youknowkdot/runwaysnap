@@ -50,5 +50,28 @@ fs.writeFileSync(
   "# Static site\n"
 );
 
+
+// cache-bust CSS/JS hrefs in dist HTML (GitHub Pages max-age sticky caches)
+const { execSync } = require("child_process");
+let assetV = Date.now().toString(36);
+try {
+  assetV = execSync("git rev-parse --short HEAD", { cwd: root, encoding: "utf8" }).trim();
+} catch (_) {}
+for (const htmlName of ["index.html", "app.html"]) {
+  const htmlPath = path.join(dist, htmlName);
+  if (!fs.existsSync(htmlPath)) continue;
+  let html = fs.readFileSync(htmlPath, "utf8");
+  html = html.replace(
+    /(href="css\/styles\.css)(?:\?[^"]*)?(")/g,
+    `$1?v=${assetV}$2`
+  );
+  html = html.replace(
+    /(src="js\/(?:config|storage|calc|chart|app)\.js)(?:\?[^"]*)?(")/g,
+    `$1?v=${assetV}$2`
+  );
+  fs.writeFileSync(htmlPath, html);
+}
+console.log("Asset cache-bust v=" + assetV);
+
 console.log("Built static site → dist/");
 console.log("Deploy the dist/ folder to Netlify, Cloudflare Pages, or GitHub Pages.");
