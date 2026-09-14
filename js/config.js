@@ -11,7 +11,7 @@
  */
 window.RUNWAYSNAP_CONFIG = {
   // ⚠️ PLACEHOLDER — replace with your Gumroad or Lemon Squeezy URL before selling
-  YOUR_CHECKOUT_URL: "https://YOUR_CHECKOUT_URL.example/runwaysnap-pro",
+  YOUR_CHECKOUT_URL: "https://kdotknows.gumroad.com/l/evzmb",
 
   PRICE: "$19",
   PRICE_NOTE: "one-time",
