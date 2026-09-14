@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RunwaySnap — Cash runway calculator for founders</title>
+  <meta name="description" content="Know how many months of runway you have. Free browser calculator for solo founders and small ops teams. Pro unlocks CSV import and PDF brief — $19 one-time." />
+  <meta name="theme-color" content="#0a0b0f" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;550;650;750&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css?v=e445eb2" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2300FBFF'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='%230a0b0f' font-size='16' font-family='system-ui' font-weight='700'%3ER%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container inner">
+      <a class="logo" href="index.html">
+        <span class="logo-mark" aria-hidden="true">R</span>
+        RunwaySnap
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <a href="#who">Who it’s for</a>
+        <a href="#pricing">Pricing</a>
+        <a href="app.html" class="btn btn-primary btn-sm">Open calculator</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow">Cash runway, clarified</span>
+          <h1>Know how long your cash lasts.</h1>
+          <p class="lede">
+            A calm, private runway calculator for solo founders and small ops teams.
+            Numbers stay in your browser. No account required.
+          </p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="app.html">Try the free calculator</a>
+          </div>
+          <p class="price-chip">
+            Free forever for core runway math ·
+            <strong>$19</strong> one-time for Pro tools
+          </p>
+          <p class="hero-pro-link">
+            <a href="#pricing">or unlock Pro — $19 one-time →</a>
+          </p>
+        </div>
+        <aside class="hero-card" aria-label="Sample runway preview">
+          <div class="mini-label">Example · $85k cash · $12k/mo burn</div>
+          <div class="stat-row">
+            <div class="stat">
+              <div class="label">Runway</div>
+              <div class="value ok">7.1 months</div>
+            </div>
+            <div class="stat">
+              <div class="label">Zero-cash date</div>
+              <div class="value">~7 months out</div>
+            </div>
+          </div>
+          <svg class="hero-chart" viewBox="0 0 640 220" role="img" aria-label="Sample declining cash chart">
+            <defs>
+              <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00FBFF" stop-opacity="0.35"/>
+                <stop offset="100%" stop-color="#00FBFF" stop-opacity="0.02"/>
+              </linearGradient>
+            </defs>
+            <polygon points="40,40 100,55 160,70 220,85 280,100 340,115 400,130 460,145 520,160 580,200 580,200 40,200" fill="url(#g)"/>
+            <polyline points="40,40 100,55 160,70 220,85 280,100 340,115 400,130 460,145 520,160 580,200" fill="none" stroke="#00FBFF" stroke-width="2.5" stroke-linejoin="round"/>
+            <circle cx="580" cy="200" r="5" fill="#00FBFF"/>
+          </svg>
+          <p class="hero-card-note">Illustrative only — open the calculator for your numbers.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="block alt" id="who">
+      <div class="container">
+        <h2 class="section-title">Built for people who watch the bank balance</h2>
+        <p class="section-sub">
+          Not a full accounting suite — a focused tool you can open before a board update,
+          a hire decision, or a weekend planning session.
+        </p>
+        <div class="who-grid">
+          <article class="card">
+            <h3>Solo founders</h3>
+            <p>Turn “I have some runway” into a clear months-left number and a date you can plan around.</p>
+          </article>
+          <article class="card">
+            <h3>Small ops teams</h3>
+            <p>Share a one-page brief (Pro) without dumping everyone into a spreadsheet rabbit hole.</p>
+          </article>
+          <article class="card">
+            <h3>Bootstrappers</h3>
+            <p>Model burn or income + expenses privately in the browser. Your data never leaves your device.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="pricing">
+      <div class="container">
+        <h2 class="section-title">Simple pricing</h2>
+        <p class="section-sub">
+          Start free. Unlock Pro once when you need imports, a printable brief, and saved scenarios.
+          No subscription.
+        </p>
+        <div class="pricing-grid">
+          <article class="card pricing-card">
+            <div class="tier">Free</div>
+            <div class="amount">$0 <span>forever</span></div>
+            <ul class="checklist">
+              <li>Starting cash + monthly burn</li>
+              <li>Or income + expenses mode</li>
+              <li>Months of runway &amp; zero-cash date</li>
+              <li>Simple runway chart</li>
+              <li>Remembers your last inputs locally</li>
+            </ul>
+            <a class="btn btn-secondary" href="app.html">Open free calculator</a>
+          </article>
+          <article class="card pricing-card featured">
+            <div class="tier">Pro</div>
+            <div class="amount">$19 <span>one-time</span></div>
+            <ul class="checklist">
+              <li>Everything in Free</li>
+              <li>CSV import (monthly cash or simple transactions)</li>
+              <li>Print-to-PDF one-page runway brief</li>
+              <li>Named scenarios saved in your browser</li>
+            </ul>
+            <a class="btn btn-pro" href="app.html#unlock">Unlock Pro</a>
+          </article>
+        </div>
+        <p class="fine-print">
+          Pro checkout is handled securely via Gumroad. RunwaySnap stores inputs only in your browser’s
+          localStorage — nothing is uploaded to our servers. Estimates are for planning only and are not
+          financial, tax, or investment advice.
+        </p>
+      </div>
+    </section>
+
+    <section class="block alt">
+      <div class="container cta-block">
+        <h2 class="section-title">Ready in under a minute</h2>
+        <p class="section-sub">
+          Enter starting cash and burn (or income and expenses). See runway, a projected date, and a chart —
+          then unlock Pro when you need CSV or a printable brief.
+        </p>
+        <a class="btn btn-primary" href="app.html">Start calculating</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container inner">
+      <span>© 2026 RunwaySnap · Planning estimates only</span>
+      <span>
+        <a href="app.html">Calculator</a>
+        ·
+        <a href="#pricing">Pricing</a>
+      </span>
+    </div>
+  </footer>
+</body>
+</html>

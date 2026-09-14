@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculator — RunwaySnap</title>
+  <meta name="description" content="Calculate your cash runway. Free in-browser tool. Pro: CSV import, PDF brief, scenarios." />
+  <meta name="theme-color" content="#0a0b0f" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@450;550;650;750&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css?v=e445eb2" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%2300FBFF'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='%230a0b0f' font-size='16' font-family='system-ui' font-weight='700'%3ER%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to calculator</a>
+  <header class="site-header no-print">
+    <div class="container inner">
+      <a class="logo" href="index.html">
+        <span class="logo-mark" aria-hidden="true">R</span>
+        RunwaySnap
+        <span class="badge-pro" aria-hidden="true">Pro</span>
+      </a>
+      <nav class="nav" aria-label="Primary">
+        <span id="proStatus" class="sr-only">Free</span>
+        <a href="index.html#pricing">Pricing</a>
+        <button type="button" class="btn btn-pro btn-sm" data-unlock>Unlock Pro</button>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="app-shell no-print">
+    <div class="container">
+      <div class="app-intro">
+        <h1>Runway calculator</h1>
+        <p>
+          Enter your cash position. We’ll estimate months of runway and when you might hit zero —
+          privately, in this browser.
+        </p>
+      </div>
+
+      <div class="app-layout">
+        <!-- Inputs -->
+        <section class="panel" aria-labelledby="inputsHeading">
+          <div class="panel-header">
+            <h2 id="inputsHeading">Your numbers</h2>
+            <div class="panel-header-actions">
+              <button type="button" class="btn btn-ghost btn-sm" id="btnExample">Load example</button>
+              <button type="button" class="btn btn-ghost btn-sm" id="btnClear">Clear</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="startingCash">Starting cash</label>
+            <input id="startingCash" type="number" inputmode="decimal" min="0" step="100" placeholder="e.g. 85000" aria-describedby="cashHint" />
+            <p class="hint" id="cashHint">Cash in bank you can use for operations</p>
+          </div>
+
+          <div class="segmented" role="group" aria-label="Burn input mode">
+            <button type="button" data-mode="burn" aria-pressed="true">Monthly burn</button>
+            <button type="button" data-mode="income" aria-pressed="false">Income + expenses</button>
+          </div>
+
+          <div id="burnFields">
+            <div class="field">
+              <label for="monthlyBurn">Monthly burn</label>
+              <input id="monthlyBurn" type="number" inputmode="decimal" min="0" step="100" placeholder="e.g. 12000" aria-describedby="burnHint" />
+              <p class="hint" id="burnHint">Average net cash you spend each month. Zero = break-even (unlimited runway).</p>
+            </div>
+          </div>
+
+          <div id="incomeFields" hidden>
+            <div class="field">
+              <label for="monthlyIncome">Monthly income</label>
+              <input id="monthlyIncome" type="number" inputmode="decimal" min="0" step="100" placeholder="e.g. 8000" />
+            </div>
+            <div class="field">
+              <label for="monthlyExpenses">Monthly expenses</label>
+              <input id="monthlyExpenses" type="number" inputmode="decimal" min="0" step="100" placeholder="e.g. 15000" aria-describedby="incomeHint" />
+              <p class="hint" id="incomeHint">We use expenses − income as your net burn. If income ≥ expenses, runway is unlimited.</p>
+            </div>
+          </div>
+
+          <!-- Locked Pro teaser (shown after first successful calc) -->
+          <div class="pro-locked" id="proLocked" hidden>
+            <h3>Pro tools</h3>
+            <p>CSV import, printable PDF brief, and named scenarios — $19 one-time.</p>
+            <div class="pro-actions">
+              <button type="button" class="btn btn-pro btn-sm" data-unlock>Unlock Pro</button>
+            </div>
+          </div>
+
+          <!-- Unlocked Pro panel -->
+          <div class="pro-panel">
+            <h3 class="pro-panel-title">Pro features</h3>
+
+            <div class="field">
+              <label for="csvInput">Import CSV</label>
+              <input id="csvInput" type="file" accept=".csv,text/csv" aria-describedby="csvHint" />
+              <p class="hint" id="csvHint">Headers: <code>month,cash</code> (or <code>balance</code>) or <code>date,amount</code>. Quoted fields OK.</p>
+            </div>
+
+            <div class="field">
+              <label for="scenarioName">Scenario name</label>
+              <input id="scenarioName" type="text" maxlength="60" placeholder="e.g. Base case Q3" autocomplete="off" />
+            </div>
+            <div class="pro-actions pro-actions-gap">
+              <button type="button" class="btn btn-secondary btn-sm" id="btnSaveScenario">Save scenario</button>
+              <button type="button" class="btn btn-secondary btn-sm" id="btnPrint">Print / PDF brief</button>
+            </div>
+            <ul class="scenario-list" id="scenarioList" aria-label="Saved scenarios"></ul>
+            <p class="hint lock-pro-wrap" hidden>
+              <button type="button" class="btn btn-ghost btn-sm" id="btnLockPro" title="Debug: revert to Free">Lock Pro (testing)</button>
+            </p>
+          </div>
+        </section>
+
+        <!-- Results -->
+        <section class="panel" aria-labelledby="resultsHeading" aria-live="polite">
+          <div class="panel-header">
+            <h2 id="resultsHeading">Your runway</h2>
+          </div>
+
+          <div id="emptyResults" class="empty-state">
+            <strong>Waiting for numbers</strong>
+            Enter starting cash and monthly burn — or tap <em>Load example</em> — to see runway, a zero-cash date, and a chart.
+          </div>
+
+          <div id="filledResults" hidden>
+            <div class="results-grid">
+              <div class="result-card">
+                <div class="label">Runway</div>
+                <div class="value" id="outRunway">—</div>
+                <div class="sub">Months until cash hits zero</div>
+              </div>
+              <div class="result-card">
+                <div class="label">Zero-cash date</div>
+                <div class="value value-md" id="outZero">—</div>
+                <div class="sub" id="outZeroSub">Projected from today</div>
+              </div>
+              <div class="result-card">
+                <div class="label">Net monthly</div>
+                <div class="value value-md" id="outBurn">—</div>
+                <div class="sub">Burn or surplus</div>
+              </div>
+              <div class="result-card">
+                <div class="label">Starting cash</div>
+                <div class="value value-md" id="outCash">—</div>
+                <div class="sub">As entered</div>
+              </div>
+            </div>
+
+            <div class="chart-wrap">
+              <h3>Projected cash balance</h3>
+              <svg id="runwayChart" viewBox="0 0 640 220" width="100%" height="220" aria-label="Projected cash chart"></svg>
+            </div>
+
+            <p class="hint disclaimer">
+              Rough estimate assuming constant monthly burn. Not financial advice — verify with your books.
+            </p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <!-- Print brief (Pro) -->
+  <div id="printBrief" aria-hidden="true"></div>
+
+  <footer class="site-footer no-print">
+    <div class="container inner">
+      <span>© 2026 RunwaySnap · Data stays in your browser</span>
+      <a href="index.html">Back to home</a>
+    </div>
+  </footer>
+
+  <!-- Unlock modal -->
+  <div class="unlock-modal-backdrop" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="unlockTitle" aria-hidden="true">
+    <div class="modal">
+      <h2 id="unlockTitle">Unlock RunwaySnap Pro</h2>
+      <p>
+        Get CSV import, a one-page printable runway brief, and named scenarios.
+        <strong>$19 one-time</strong> — no subscription.
+      </p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-pro" id="btnCheckout">Buy on Gumroad — $19</button>
+        <button type="button" class="btn btn-secondary" id="btnCloseModal">Not now</button>
+      </div>
+      <div class="demo-unlock-ui" hidden>
+        <div class="divider">or demo unlock</div>
+        <div class="field field-tight">
+          <label for="demoCode">Demo code</label>
+          <input id="demoCode" type="text" autocomplete="off" placeholder="RUNWAY-PRO" spellcheck="false" />
+          <p class="hint">For demos and testing. Also works: add <code>?pro=1</code> to the URL.</p>
+        </div>
+        <button type="button" class="btn btn-secondary" id="btnDemoUnlock">Apply code</button>
+      </div>
+      <p class="hint checkout-hint">
+        Secure checkout via Gumroad. After purchase, open the link from your receipt to unlock Pro on this device.
+      </p>
+    </div>
+  </div>
+
+  <script src="js/config.js?v=e445eb2"></script>
+  <script src="js/storage.js?v=e445eb2"></script>
+  <script src="js/calc.js?v=e445eb2"></script>
+  <script src="js/chart.js?v=e445eb2"></script>
+  <script src="js/app.js?v=e445eb2"></script>
+  <script>
+    // Deep-link #unlock opens modal
+    if (location.hash === "#unlock") {
+      document.addEventListener("DOMContentLoaded", () => {
+        document.querySelector("[data-unlock]")?.click();
+      });
+    }
+  </script>
+</body>
+</html>
