@@ -46,6 +46,11 @@
     if (lockWrap) {
       lockWrap.hidden = !(on && debug);
     }
+    // Demo unlock UI: only when ?debug=1 (same pattern as Lock Pro)
+    const demoUi = $(".demo-unlock-ui");
+    if (demoUi) {
+      demoUi.hidden = !debug;
+    }
   }
 
   function checkQueryPro() {
@@ -131,11 +136,13 @@
       filled.hidden = true;
       window.RSChart.render($("#runwayChart"), [], []);
       updatePrintBrief(null);
+      updateProTeaser(false);
       return;
     }
 
     empty.hidden = true;
     filled.hidden = false;
+    updateProTeaser(true);
 
     const norm = window.RSCalc.normalize({
       startingCash: parseFloat(state.startingCash),
@@ -262,6 +269,13 @@
       .replace(/"/g, "&quot;");
   }
 
+  function updateProTeaser(hasResult) {
+    const el = $("#proLocked") || $(".pro-locked");
+    if (!el) return;
+    // Defer Pro teaser until after first successful calc; CSS still hides when is-pro
+    el.hidden = !hasResult;
+  }
+
   /* —— Pro unlock —— */
   let lastFocus = null;
 
@@ -273,14 +287,19 @@
     // Reflect placeholder status on checkout button
     const checkoutBtn = $("#btnCheckout");
     if (checkoutBtn && cfg.isCheckoutPlaceholder && cfg.isCheckoutPlaceholder()) {
-      checkoutBtn.textContent = "Buy Pro — $19 (checkout URL not set)";
+      checkoutBtn.textContent = "Buy on Gumroad — $19 (checkout URL not set)";
       checkoutBtn.title =
         "Replace YOUR_CHECKOUT_URL in js/config.js with your Gumroad or Lemon Squeezy link";
     } else if (checkoutBtn) {
-      checkoutBtn.textContent = "Buy Pro — $19";
+      checkoutBtn.textContent = "Buy on Gumroad — $19";
       checkoutBtn.removeAttribute("title");
     }
-    $("#demoCode")?.focus();
+    const debug = new URLSearchParams(location.search).has("debug");
+    if (debug) {
+      $("#demoCode")?.focus();
+    } else {
+      checkoutBtn?.focus();
+    }
   }
 
   function closeUnlockModal() {

@@ -360,6 +360,22 @@ button:focus-visible,
   font-size: 1.05rem;
 }
 
+.hero-pro-link {
+  margin: 0.65rem 0 0;
+  font-size: 0.9rem;
+}
+
+.hero-pro-link a {
+  color: var(--pro);
+  text-decoration: none;
+  font-weight: 550;
+}
+
+.hero-pro-link a:hover {
+  text-decoration: underline;
+  color: var(--pro);
+}
+
 .hero-card {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -872,6 +888,15 @@ body.is-pro .pro-locked {
 }
 
 body.is-pro.debug-mode .lock-pro-wrap {
+  display: block;
+}
+
+/* Demo unlock UI: hidden unless ?debug=1 */
+.demo-unlock-ui {
+  display: none;
+}
+
+body.debug-mode .demo-unlock-ui {
   display: block;
 }
 

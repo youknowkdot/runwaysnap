@@ -81,8 +81,8 @@
             </div>
           </div>
 
-          <!-- Locked Pro teaser -->
-          <div class="pro-locked">
+          <!-- Locked Pro teaser (shown after first successful calc) -->
+          <div class="pro-locked" id="proLocked" hidden>
             <h3>Pro tools</h3>
             <p>CSV import, printable PDF brief, and named scenarios — $19 one-time.</p>
             <div class="pro-actions">
@@ -183,16 +183,18 @@
         <strong>$19 one-time</strong> — no subscription.
       </p>
       <div class="modal-actions">
-        <button type="button" class="btn btn-pro" id="btnCheckout">Buy Pro — $19</button>
+        <button type="button" class="btn btn-pro" id="btnCheckout">Buy on Gumroad — $19</button>
         <button type="button" class="btn btn-secondary" id="btnCloseModal">Not now</button>
       </div>
-      <div class="divider">or demo unlock</div>
-      <div class="field field-tight">
-        <label for="demoCode">Demo code</label>
-        <input id="demoCode" type="text" autocomplete="off" placeholder="RUNWAY-PRO" spellcheck="false" />
-        <p class="hint">For demos and testing. Also works: add <code>?pro=1</code> to the URL.</p>
+      <div class="demo-unlock-ui" hidden>
+        <div class="divider">or demo unlock</div>
+        <div class="field field-tight">
+          <label for="demoCode">Demo code</label>
+          <input id="demoCode" type="text" autocomplete="off" placeholder="RUNWAY-PRO" spellcheck="false" />
+          <p class="hint">For demos and testing. Also works: add <code>?pro=1</code> to the URL.</p>
+        </div>
+        <button type="button" class="btn btn-secondary" id="btnDemoUnlock">Apply code</button>
       </div>
-      <button type="button" class="btn btn-secondary" id="btnDemoUnlock">Apply code</button>
       <p class="hint checkout-hint">
         Secure checkout via Gumroad. After purchase, open the link from your receipt to unlock Pro on this device.
       </p>
